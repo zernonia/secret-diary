@@ -1,7 +1,7 @@
 <template>
-  <div class="diary p-8 w-screen-md h-screen-md border-3 border-dark-900 rounded-xl">
+  <div class="diary p-8 flex flex-col w-screen-md h-screen-md border-3 border-dark-900 rounded-xl">
     <h1>Secret Diary</h1>
-    <div class="h-auto w-auto">
+    <div class="w-full h-full">
       <router-view></router-view>
     </div>
   </div>

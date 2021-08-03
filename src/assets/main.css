@@ -1,8 +1,14 @@
+html {
+  font-family: Inter, sans-serif;
+}
 h1 {
   @apply text-dark-900 text-4xl font-bold;
 }
 h2 {
   @apply text-dark-900 text-3xl font-bold;
+}
+h3 {
+  @apply text-dark-900 text-2xl font-bold;
 }
 
 button,
@@ -73,7 +79,7 @@ input[type="color"]::-webkit-color-swatch {
 }
 
 .btn {
-  @apply px-6 py-2 text-lg font-medium rounded-xl  border-3 border-dark-600 hover:bg-cyan-300 transform transition-all active:scale-95 outline-none;
+  @apply px-6 py-2 text-lg font-medium rounded-xl w-min border-3 border-dark-600 hover:bg-cyan-300 transform transition-all active:scale-95 outline-none;
 }
 .btn-solid {
   @apply px-6 py-2 text-lg font-medium rounded-xl bg-dark-600 text-white border-3 border-dark-600 hover:text-cyan-300 transform transition-all active:scale-95 outline-none;
@@ -85,4 +91,8 @@ input[type="color"]::-webkit-color-swatch {
 
 .btn-icon {
   @apply p-3 flex rounded-md bg-dark-800 border-2 border-dark-600 cursor-pointer opacity-50 hover:opacity-100 hover:bg-dark-600 transition duration-300 ease-in;
+}
+
+.dear-diary {
+  @apply font-normal mb-4;
 }
