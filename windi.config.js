@@ -1,3 +1,3 @@
-module.exports = {
-  plugins: [required("windicss/plugin/typography")],
+export default {
+  plugins: [require("windicss/plugin/typography")],
 }

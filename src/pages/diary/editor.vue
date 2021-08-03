@@ -83,7 +83,7 @@ onMounted(async () => {
     autofocus: true,
     editorProps: {
       attributes: {
-        class: "prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none",
+        class: "prose focus:outline-none",
       },
     },
   })
