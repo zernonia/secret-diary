@@ -28,8 +28,8 @@
       </button>
     </BubbleMenu>
     <editor-content :editor="editor" />
-    <button class="btn flex items-center" @click="publishContent">Save <i-ic:twotone-save class="ml-2"></i-ic:twotone-save></button>
   </div>
+  <button class="btn mt-4 flex items-center" @click="publishContent">Save <i-ic:twotone-save class="ml-2"></i-ic:twotone-save></button>
 </template>
 
 <script setup lang="ts">
@@ -42,16 +42,15 @@ import { supabase } from "@/supabase"
 import { useIdle } from "@vueuse/core"
 import { state } from "@/store"
 
+const content = ref<any>({})
 const date = ref(new Date(Date.now()).toDateString())
-const content = ref<Record<string, any>>({})
 const editor = ref<Editor>()
 
-onMounted(() => {
-  console.log(supabase.auth.user())
+onMounted(async () => {
   fetchContent()
   editor.value = new Editor({
     extensions: [StarterKit, TextAlign, Highlight.configure({ multicolor: true })],
-    content: "Dear diary",
+    content: "",
     autofocus: true,
     editorProps: {
       attributes: {
@@ -65,31 +64,35 @@ onBeforeUnmount(() => {
   editor.value?.destroy()
 })
 
-const { idle, lastActive } = useIdle(1 * 1000)
+const { idle, lastActive } = useIdle(3 * 1000, {
+  events: ["keydown"],
+})
 
 watch(idle, (n) => {
-  if (n) console.log("idling")
+  if (n) {
+    saveContent()
+  }
 })
 
 const fetchContent = async () => {
   const { data, error } = await supabase.from("diaries").select("*").eq("date", date.value)
-
-  console.log(data)
+  if (data) {
+    content.value = data[0]
+    editor.value?.commands.setContent(content.value.content)
+    console.log(content.value.content)
+  }
 }
 
 const saveContent = async () => {
   const { data, error } = await supabase.from("diaries").upsert({
+    id: content.value.id,
     date: date.value,
     content: editor.value?.getJSON(),
+    user_id: state.user?.id,
   })
 }
 
-const publishContent = () => {
-  if (editor.value) {
-    content.value = editor.value?.getJSON()
-    console.log(content.value)
-  }
-}
+const publishContent = () => {}
 </script>
 
 <style lang="postcss">
