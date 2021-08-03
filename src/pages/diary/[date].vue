@@ -1,12 +1,17 @@
 <template>
-  <div>
+  <div class="h-full flex flex-col relative">
     <div class="flex justify-between items-center">
       <h3 class="dear-diary">Dear diary,</h3>
       <p class="border-b-3 border-dotted">{{ $route.params.date }}</p>
     </div>
-    <div class="diary-page">
+    <div @scroll="scrollListener" ref="target" class="diary-page overflow-hidden overflow-y-auto">
       <editor-content :editor="editor" />
     </div>
+    <teleport v-if="scrollBarShowing" to="#diary">
+      <div>
+        <!-- scrollbar -->
+      </div>
+    </teleport>
   </div>
 </template>
 
@@ -24,6 +29,7 @@ import { useRoute } from "vue-router"
 const route = useRoute()
 const editor = ref<Editor>()
 const content = ref<any>({})
+const target = ref<HTMLDivElement>()
 
 onMounted(async () => {
   fetchContent()
@@ -40,8 +46,11 @@ onMounted(async () => {
     content: "",
     editorProps: {
       attributes: {
-        class: "prose focus:outline-none",
+        class: "prose max-w-full focus:outline-none",
       },
+    },
+    onUpdate() {
+      constructScrollBar()
     },
   })
 })
@@ -50,7 +59,26 @@ const fetchContent = async () => {
   const { data, error } = await supabase.from("diaries").select("*").eq("date", route.params.date)
   if (data?.length) {
     content.value = data[0]
-    editor.value?.commands.setContent(content.value.content)
+    editor.value?.commands.setContent(content.value.content, true)
+  }
+}
+
+let maxHeight = 0
+let containerHeight = 0
+const scrollBarShowing = ref(false)
+const constructScrollBar = () => {
+  if (target.value) {
+    maxHeight = target.value.scrollHeight
+    containerHeight = target.value.offsetHeight
+
+    maxHeight != containerHeight ? (scrollBarShowing.value = true) : ""
+  }
+}
+
+const scrollListener = (e: MouseEvent) => {
+  if (target.value) {
+    const scrollPosition = target.value.scrollTop
+    console.log(scrollPosition)
   }
 }
 </script>

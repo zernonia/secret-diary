@@ -1,7 +1,6 @@
 <template>
   <section class="flex flex-col justify-between h-full">
-    <div>
-      <p>{{ date }}</p>
+    <div class="flex items-center justify-between">
       <div class="flex space-x-4" v-if="editor">
         <button @click="editor?.chain().focus().toggleHeading({ level: 2 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }">
           h2
@@ -11,7 +10,10 @@
         </button>
         <button @click="editor?.chain().focus().setParagraph().run()" :class="{ 'is-active': editor.isActive('paragraph') }">paragraph</button>
       </div>
-      <div class="mt-4 diary-page">
+      <p class="border-b-3 border-dotted">{{ date }}</p>
+    </div>
+    <div class="overflow-auto">
+      <div class="mt-4 diary-page h-auto overflow-hidden overflow-y-auto">
         <BubbleMenu class="bubble bg-white p-2 rounded-lg border-3 border-cyan-300 flex items-center space-x-1" :editor="editor" v-if="editor">
           <button @click="editor?.chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }">
             <i-ic:round-format-bold></i-ic:round-format-bold>
@@ -83,7 +85,7 @@ onMounted(async () => {
     autofocus: true,
     editorProps: {
       attributes: {
-        class: "prose focus:outline-none",
+        class: "prose max-w-full focus:outline-none",
       },
     },
   })

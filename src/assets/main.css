@@ -59,23 +59,24 @@ input[type="color"]::-webkit-color-swatch {
 
 /* width */
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 5px;
+  height: 5px;
+  border-radius: 5px;
 }
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: #1e1e1e;
+  background: rgb(255, 255, 255);
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #2a2a2a;
+  @apply bg-white;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #2a2a2a;
+  @apply bg-white;
 }
 
 .btn {
@@ -92,4 +93,8 @@ input[type="color"]::-webkit-color-swatch {
 
 .dear-diary {
   @apply font-normal my-4;
+}
+
+.bookmark {
+  @apply p-2 border-3 border-dark-900 rounded-l-lg flex items-center;
 }
