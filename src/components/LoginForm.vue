@@ -16,16 +16,26 @@
           @keydown.backspace="handleBackspace"
         />
       </div>
-      <button class="btn my-4" @click="login">Login</button>
-      <button class="btn" @click="register">Register</button>
+      <div class="my-4 flex items-center space-x-2">
+        <button class="btn-solid" @click="login">Login</button>
+        <button class="btn" @click="register">Register</button>
+      </div>
     </div>
 
     <div v-else class="flex flex-col items-center">
       <label for="">Verify OTP</label>
       <div class="flex items-center justify-between space-x-2">
-        <input type="tel" maxlength="1" v-for="(t, index) in token" :key="index" v-model="token[index]" @input="handleInput" />
+        <input
+          type="tel"
+          maxlength="1"
+          v-for="(t, index) in token"
+          :key="index"
+          v-model="token[index]"
+          @input="handleInput"
+          @keydown.backspace="handleBackspace"
+        />
       </div>
-      <button @click="verify">Verify</button>
+      <button class="btn mt-4" @click="verify">Verify</button>
     </div>
   </div>
 </template>
@@ -40,6 +50,7 @@ const pin = ref(["", "", "", "", "", ""])
 const token = ref(["", "", "", "", "", ""])
 const loginPhase = ref(true)
 const invalidToast = ref()
+
 const login = async () => {
   const regex = /^[\+][(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/
   const regexDigit = /^[0-9]{6}$/
@@ -47,7 +58,7 @@ const login = async () => {
   if (phone_number.value.match(regex) && pinString.match(regexDigit)) {
     let { session, error } = await supabase.auth.signIn({
       phone: phone_number.value,
-      password: pinString,
+      // password: pinString,
     })
     if (error) {
       invalidToast.value = error
@@ -61,7 +72,7 @@ const login = async () => {
 const register = async () => {
   const regex = /^[\+][(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/
   const regexDigit = /^[0-9]{6}$/
-  const pinString = token.value.join("")
+  const pinString = pin.value.join("")
   if (phone_number.value.match(regex) && pinString.match(regexDigit)) {
     let { user, error } = await supabase.auth.signUp({
       phone: phone_number.value,
@@ -101,7 +112,6 @@ const handleInput = (e: InputEvent) => {
 }
 
 const handleBackspace = (e: KeyboardEvent) => {
-  console.log(e.target.value)
   const input = e.target as HTMLInputElement
   if (input.previousElementSibling && !e.target.value) {
     input.previousElementSibling.focus()

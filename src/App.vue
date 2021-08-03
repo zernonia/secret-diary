@@ -4,4 +4,11 @@
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { onMounted } from "vue"
+import { state } from "./store"
+
+onMounted(() => {
+  state.setUser()
+})
+</script>

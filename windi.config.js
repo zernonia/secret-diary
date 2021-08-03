@@ -1,3 +1,3 @@
 module.exports = {
-  plugins: [require("windicss/plugin/forms")],
+  plugins: [required("windicss/plugin/typography")],
 }

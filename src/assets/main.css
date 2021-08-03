@@ -1,6 +1,9 @@
 h1 {
   @apply text-dark-900 text-4xl font-bold;
 }
+h2 {
+  @apply text-dark-900 text-3xl font-bold;
+}
 
 button,
 input {
@@ -12,12 +15,12 @@ input[type="email"],
 input[type="password"],
 input[type="number"],
 input[type="tel"] {
-  @apply rounded-lg border-3 border-dark-400 focus:ring-blue-400;
+  @apply rounded-xl p-2 px-4 border-3 border-dark-900 focus:ring-cyan-300 focus:border-cyan-300;
 }
 input[type="tel"],
 input[type="password"],
 input[type="number"] {
-  @apply w-10 h-10 text-center;
+  @apply w-11 h-11 p-2 text-center;
 }
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -70,7 +73,10 @@ input[type="color"]::-webkit-color-swatch {
 }
 
 .btn {
-  @apply px-6 py-2 font-medium rounded-lg  border-3 border-dark-600 focus:border-blue-700 transform transition-all active:scale-95 outline-none;
+  @apply px-6 py-2 text-lg font-medium rounded-xl  border-3 border-dark-600 hover:bg-cyan-300 transform transition-all active:scale-95 outline-none;
+}
+.btn-solid {
+  @apply px-6 py-2 text-lg font-medium rounded-xl bg-dark-600 text-white border-3 border-dark-600 hover:text-cyan-300 transform transition-all active:scale-95 outline-none;
 }
 
 .btn-pale {

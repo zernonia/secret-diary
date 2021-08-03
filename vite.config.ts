@@ -4,11 +4,17 @@ import Components from "vite-plugin-components"
 import ViteIcons, { ViteIconsResolver } from "vite-plugin-icons"
 import WindiCSS from "vite-plugin-windicss"
 import Pages from "vite-plugin-pages"
+import path from "path"
 
 // https://vitejs.dev/config/
 export default defineConfig({
   server: {
     port: 5000,
+  },
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "/src"),
+    },
   },
   build: {
     rollupOptions: {
