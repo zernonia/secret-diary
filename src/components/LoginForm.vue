@@ -55,15 +55,15 @@ const login = async () => {
   const regex = /^[\+][(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/
   const regexDigit = /^[0-9]{6}$/
   const pinString = pin.value.join("")
-  if (phone_number.value.match(regex) && pinString.match(regexDigit)) {
+  if (pinString.match(regexDigit)) {
     let { session, error } = await supabase.auth.signIn({
       phone: phone_number.value,
-      // password: pinString,
+      password: pinString,
     })
     if (error) {
       invalidToast.value = error
     } else {
-      loginPhase.value = false
+      router.push("/diary")
     }
   } else {
     console.log("invalid phone")
@@ -73,7 +73,7 @@ const register = async () => {
   const regex = /^[\+][(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/
   const regexDigit = /^[0-9]{6}$/
   const pinString = pin.value.join("")
-  if (phone_number.value.match(regex) && pinString.match(regexDigit)) {
+  if (pinString.match(regexDigit)) {
     let { user, error } = await supabase.auth.signUp({
       phone: phone_number.value,
       password: pinString,

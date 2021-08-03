@@ -6,6 +6,5 @@ export const state = reactive({
   user: null as User | null,
   setUser: () => {
     state.user = supabase.auth.user()
-    console.log(supabase.auth.user())
   },
 })
