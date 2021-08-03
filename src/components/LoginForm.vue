@@ -1,0 +1,110 @@
+<template>
+  <div class="flex flex-col items-center">
+    <h1>Open Diary</h1>
+    <div v-if="loginPhase" class="flex flex-col items-center">
+      <label for="">Phone Number</label>
+      <input type="text" v-model="phone_number" />
+      <label for="">Password</label>
+      <div class="flex items-center justify-between space-x-2">
+        <input
+          type="number"
+          maxlength="1"
+          v-for="(t, index) in pin"
+          :key="index"
+          v-model="pin[index]"
+          @input="handleInput"
+          @keydown.backspace="handleBackspace"
+        />
+      </div>
+      <button class="btn my-4" @click="login">Login</button>
+      <button class="btn" @click="register">Register</button>
+    </div>
+
+    <div v-else class="flex flex-col items-center">
+      <label for="">Verify OTP</label>
+      <div class="flex items-center justify-between space-x-2">
+        <input type="tel" maxlength="1" v-for="(t, index) in token" :key="index" v-model="token[index]" @input="handleInput" />
+      </div>
+      <button @click="verify">Verify</button>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from "vue"
+import { useRouter } from "vue-router"
+import { supabase } from "../supabase"
+
+const phone_number = ref("")
+const pin = ref(["", "", "", "", "", ""])
+const token = ref(["", "", "", "", "", ""])
+const loginPhase = ref(true)
+const invalidToast = ref()
+const login = async () => {
+  const regex = /^[\+][(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/
+  const regexDigit = /^[0-9]{6}$/
+  const pinString = pin.value.join("")
+  if (phone_number.value.match(regex) && pinString.match(regexDigit)) {
+    let { session, error } = await supabase.auth.signIn({
+      phone: phone_number.value,
+      password: pinString,
+    })
+    if (error) {
+      invalidToast.value = error
+    } else {
+      loginPhase.value = false
+    }
+  } else {
+    console.log("invalid phone")
+  }
+}
+const register = async () => {
+  const regex = /^[\+][(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/
+  const regexDigit = /^[0-9]{6}$/
+  const pinString = token.value.join("")
+  if (phone_number.value.match(regex) && pinString.match(regexDigit)) {
+    let { user, error } = await supabase.auth.signUp({
+      phone: phone_number.value,
+      password: pinString,
+    })
+    if (error) {
+      invalidToast.value = error
+    } else {
+      loginPhase.value = false
+    }
+  } else {
+    console.log("invalid phone")
+  }
+}
+const router = useRouter()
+const verify = async () => {
+  const regex = /^[0-9]{6}$/
+  const tokenString = token.value.join("")
+  if (tokenString.match(regex)) {
+    let { session, error } = await supabase.auth.verifyOTP({
+      phone: phone_number.value,
+      token: tokenString,
+    })
+    if (error) {
+      invalidToast.value = error
+    } else {
+      router.push("/diary")
+    }
+  }
+}
+
+const handleInput = (e: InputEvent) => {
+  const input = e.target as HTMLInputElement
+  if (input.nextElementSibling && e.data) {
+    input.nextElementSibling.focus()
+  }
+}
+
+const handleBackspace = (e: KeyboardEvent) => {
+  console.log(e.target.value)
+  const input = e.target as HTMLInputElement
+  if (input.previousElementSibling && !e.target.value) {
+    input.previousElementSibling.focus()
+  }
+}
+</script>
