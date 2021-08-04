@@ -6,7 +6,8 @@
   "author": "zernonia",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc --noEmit && vite build",
+    "build": "vite build",
+    "test": "vue-tsc --noEmit",
     "serve": "vite preview"
   },
   "dependencies": {

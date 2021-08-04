@@ -17,15 +17,6 @@ export default defineConfig({
       "@": path.resolve(__dirname, "/src"),
     },
   },
-  build: {
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          ace: ["vue3-ace-editor"],
-        },
-      },
-    },
-  },
   plugins: [
     vue(),
     Components({
