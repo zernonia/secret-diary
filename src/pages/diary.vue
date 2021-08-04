@@ -4,7 +4,7 @@
       <h2>
         Hi, <span class="text-cyan-400"> {{ state.profile.username }}</span>
       </h2>
-      <h2>Secret Diary</h2>
+      <h2 class="flex items-center">Secret Diary <i-ic:twotone-book></i-ic:twotone-book></h2>
     </div>
     <div id="diary" class="diary p-8 relative flex flex-col w-auto lg:w-screen-md lg:h-screen-md border-3 border-dark-900 rounded-xl">
       <div class="w-full h-full">
@@ -13,6 +13,7 @@
       <div class="absolute z-0 right-full w-auto top-10 flex flex-col space-y-2">
         <button class="bookmark" @click="$router.push('/diary/editor')"><i-ic:twotone-add-circle></i-ic:twotone-add-circle></button>
         <button class="bookmark" @click="$router.push('/diary')"><i-ic:twotone-list-alt></i-ic:twotone-list-alt></button>
+        <button class="bookmark" @click="$router.push('/diary')"><i-ic:twotone-filter></i-ic:twotone-filter></button>
       </div>
       <div class="absolute z-0 right-full w-auto bottom-10 flex flex-col space-y-2">
         <button class="bookmark" @click="$router.push('/diary/config')"><i-ic:twotone-settings></i-ic:twotone-settings></button>

@@ -4,12 +4,7 @@ import "virtual:windi.css"
 import "./assets/main.css"
 import "./assets/tooltip.css"
 import { createRouter, createWebHistory } from "vue-router"
-import routes from "virtual:generated-pages"
-
-const router = createRouter({
-  history: createWebHistory(),
-  routes,
-})
+import router from "./router"
 
 function init(el: Element, binding: DirectiveBinding) {
   let position = binding.arg || "top"
