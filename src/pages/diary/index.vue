@@ -33,7 +33,6 @@ const row = computed(() => {
 })
 
 const onDayClick = (e: any) => {
-  console.log(e.attributes[0])
   if (e.attributes[0]) {
     router.push("/diary/" + e.id)
   }

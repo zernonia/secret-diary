@@ -98,3 +98,7 @@ input[type="color"]::-webkit-color-swatch {
 .bookmark {
   @apply p-2 border-3 border-dark-900 rounded-l-lg flex items-center;
 }
+
+.ProseMirror img {
+  @apply w-full h-full border-dark-900 border-3 rounded-xl;
+}

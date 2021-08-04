@@ -63,7 +63,9 @@ import TextAlign from "@tiptap/extension-text-align"
 import Highlight from "@tiptap/extension-highlight"
 import Typography from "@tiptap/extension-typography"
 import Placeholder from "@tiptap/extension-placeholder"
+import Image from "@tiptap/extension-image"
 import { Calendar, DatePicker } from "v-calendar"
+import { createImageExtension } from "@/plugin/image"
 
 import { onBeforeUnmount, onMounted, ref, watch } from "vue"
 import { supabase } from "@/supabase"
@@ -82,11 +84,30 @@ const highlightColor = (e: InputEvent) => {
   console.log(e)
 }
 
+// upload Image
+async function upload(file: File) {
+  let formData = new FormData()
+  formData.append("file", file)
+  const randomString = (Math.random() + 1).toString(36).substring(7) + "-"
+  const generateString = state.user?.id + "/" + randomString + file.name
+  const headers = { "Content-Type": "multipart/form-data" }
+  const dataKey = await supabase.storage.from("assets").upload(generateString, formData)
+
+  const { data, error } = await supabase.storage.from("assets").download(generateString)
+
+  console.log(data)
+  if (data) {
+    return URL.createObjectURL(data)
+  } else {
+    return ""
+  }
+}
+
 onMounted(async () => {
   fetchContent()
   editor.value = new Editor({
-    editable: content.value.isEditing,
     extensions: [
+      createImageExtension(upload),
       StarterKit,
       TextAlign.configure({
         types: ["heading", "paragraph"],
@@ -173,6 +194,9 @@ const onDayClick = (day: any) => {
   color: #ced4da;
   pointer-events: none;
   height: 0;
+}
+.ProseMirror img {
+  @apply w-full h-full border-dark-900 border-3 rounded-xl;
 }
 
 .bubble > button {

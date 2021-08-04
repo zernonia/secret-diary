@@ -21,6 +21,7 @@ import StarterKit from "@tiptap/starter-kit"
 import TextAlign from "@tiptap/extension-text-align"
 import Highlight from "@tiptap/extension-highlight"
 import Typography from "@tiptap/extension-typography"
+import Image from "@tiptap/extension-image"
 
 import { onBeforeUnmount, onMounted, ref, watch } from "vue"
 import { supabase } from "@/supabase"
@@ -37,6 +38,7 @@ onMounted(async () => {
     editable: false,
     extensions: [
       StarterKit,
+      Image,
       TextAlign.configure({
         types: ["heading", "paragraph"],
       }),
