@@ -84,7 +84,7 @@ const router = useRouter()
 const content = ref<any>({})
 const date = ref(new Date(Date.now()))
 const computedDate = computed(() => {
-  return date.value.toISOString().split("T")[0]
+  return date.value.getFullYear() + "-" + date.value.getMonth() + "-" + date.value.getDate()
 })
 const editor = ref<Editor>()
 const isPublishing = ref(false)
