@@ -56,7 +56,7 @@ onMounted(async () => {
 })
 
 const fetchContent = async () => {
-  const { data, error } = await supabase.from("diaries").select("*").eq("date", route.params.date)
+  const { data, error } = await supabase.from("diaries").select("*").match({ is_editing: false }).eq("date", route.params.date)
   if (data?.length) {
     content.value = data[0]
     editor.value?.commands.setContent(content.value.content, true)

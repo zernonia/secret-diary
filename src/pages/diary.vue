@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Secret Diary</h1>
+    <h1 class="mb-2 ml-8">Secret Diary</h1>
     <div id="diary" class="diary p-8 relative flex flex-col w-screen-md h-screen-md border-3 border-dark-900 rounded-xl">
       <div class="w-full h-full">
         <router-view></router-view>
@@ -15,3 +15,16 @@
     </div>
   </div>
 </template>
+
+<style lang="postcss">
+@media only screen and (min-height: 600px) {
+  #diary {
+    @apply h-screen-sm;
+  }
+}
+@media only screen and (min-height: 900px) {
+  #diary {
+    @apply h-screen-md;
+  }
+}
+</style>

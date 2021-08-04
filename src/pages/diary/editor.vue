@@ -10,9 +10,20 @@
         </button>
         <button @click="editor?.chain().focus().setParagraph().run()" :class="{ 'is-active': editor.isActive('paragraph') }">paragraph</button>
       </div>
-      <p class="border-b-3 border-dotted">{{ date }}</p>
+      <DatePicker
+        style="font-family: Inter, sans-serif"
+        v-model="date"
+        :max-date="new Date()"
+        :masks="masks"
+        :popover="{ placement: 'bottom-end' }"
+        :is-required="true"
+      >
+        <template v-slot="{ inputValue, inputEvents }">
+          <input class="border-b-3 border-dotted text-center w-110px" :value="inputValue" v-on="inputEvents" />
+        </template>
+      </DatePicker>
     </div>
-    <div class="overflow-auto">
+    <div class="overflow-auto h-full">
       <div class="mt-4 diary-page h-auto overflow-hidden overflow-y-auto">
         <BubbleMenu class="bubble bg-white p-2 rounded-lg border-3 border-cyan-300 flex items-center space-x-1" :editor="editor" v-if="editor">
           <button @click="editor?.chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }">
@@ -51,6 +62,8 @@ import StarterKit from "@tiptap/starter-kit"
 import TextAlign from "@tiptap/extension-text-align"
 import Highlight from "@tiptap/extension-highlight"
 import Typography from "@tiptap/extension-typography"
+import Placeholder from "@tiptap/extension-placeholder"
+import { Calendar, DatePicker } from "v-calendar"
 
 import { onBeforeUnmount, onMounted, ref, watch } from "vue"
 import { supabase } from "@/supabase"
@@ -60,8 +73,7 @@ import { useRouter } from "vue-router"
 
 const router = useRouter()
 const content = ref<any>({})
-// (new Date()).toISOString().split('T')[0];
-const date = ref("2021-08-03")
+const date = ref(new Date(Date.now()).toISOString().split("T")[0])
 const editor = ref<Editor>()
 const isPublishing = ref(false)
 
@@ -73,6 +85,7 @@ const highlightColor = (e: InputEvent) => {
 onMounted(async () => {
   fetchContent()
   editor.value = new Editor({
+    editable: content.value.isEditing,
     extensions: [
       StarterKit,
       TextAlign.configure({
@@ -80,6 +93,9 @@ onMounted(async () => {
       }),
       Typography,
       Highlight.configure({ multicolor: true }),
+      Placeholder.configure({
+        placeholder: "Thank you for today...",
+      }),
     ],
     content: "",
     autofocus: true,
@@ -100,7 +116,8 @@ const { idle, lastActive } = useIdle(3 * 1000, {
 })
 
 watch(idle, (n) => {
-  if (n && !isPublishing.value) {
+  let checker = editor.value?.getJSON().content[0].content
+  if (n && !isPublishing.value && checker) {
     saveContent()
   }
 })
@@ -139,13 +156,64 @@ const publishContent = async () => {
   }
   isPublishing.value = false
 }
+
+// calendare event
+const masks = ref({
+  input: "YYYY-MM-DD",
+})
+const onDayClick = (day: any) => {
+  console.log(day)
+}
 </script>
 
 <style lang="postcss">
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: #ced4da;
+  pointer-events: none;
+  height: 0;
+}
+
 .bubble > button {
   @apply flex items-center p-2 rounded-md hover:bg-cyan-300 transition-all ease-in-out focus:outline-none outline-none;
 }
 .is-active {
   @apply bg-cyan-300;
+}
+.vc-container {
+  @apply border-3 shadow-none rounded-xl;
+}
+.vc-highlight {
+  @apply !bg-dark-900;
+}
+.vc-popover-caret.align-left {
+  right: 20%;
+}
+.vc-nav-popover-container {
+  @apply bg-white border-3 border-dark-900 text-dark-900 p-10px;
+}
+.vc-popover-caret.direction-bottom {
+  @apply -top-2px;
+}
+.vc-nav-title {
+  @apply text-dark-900 font-semibold;
+}
+.vc-nav-arrow:hover,
+.vc-nav-title:hover,
+.vc-nav-item:hover {
+  @apply bg-cyan-300 text-dark-900 shadow-none;
+}
+.vc-nav-arrow:focus,
+.vc-nav-title:focus,
+.vc-nav-item:focus {
+  @apply border-cyan-300;
+}
+
+.vc-nav-item.is-active {
+  @apply shadow-none bg-dark-900 text-white;
+}
+.vc-nav-item.is-current {
+  @apply border-dark-900 text-dark-900;
 }
 </style>
