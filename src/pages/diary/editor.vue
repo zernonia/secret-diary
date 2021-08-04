@@ -92,12 +92,11 @@ async function upload(file: File) {
   const generateString = state.user?.id + "/" + randomString + file.name
   const headers = { "Content-Type": "multipart/form-data" }
   const dataKey = await supabase.storage.from("assets").upload(generateString, formData)
+  const { signedURL } = await supabase.storage.from("assets").createSignedUrl(generateString, 630720000)
 
-  const { data, error } = await supabase.storage.from("assets").download(generateString)
-
-  console.log(data)
-  if (data) {
-    return URL.createObjectURL(data)
+  if (signedURL) {
+    // return URL.createObjectURL(data)
+    return signedURL
   } else {
     return ""
   }
