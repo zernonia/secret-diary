@@ -1,14 +1,16 @@
 <template>
-  <section class="flex flex-col justify-between h-full">
-    <div class="flex items-center justify-between">
-      <div class="flex space-x-4" v-if="editor">
+  <section class="flex flex-col justify-between h-full p-2">
+    <div class="flex items-center justify-between pb-2">
+      <div class="flex space-x-2 helper" v-if="editor">
         <button @click="editor?.chain().focus().toggleHeading({ level: 2 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }">
-          h2
+          <i-gridicons:heading-h1></i-gridicons:heading-h1>
         </button>
         <button @click="editor?.chain().focus().toggleHeading({ level: 3 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 3 }) }">
-          h3
+          <i-gridicons:heading-h2></i-gridicons:heading-h2>
         </button>
-        <button @click="editor?.chain().focus().setParagraph().run()" :class="{ 'is-active': editor.isActive('paragraph') }">paragraph</button>
+        <button @click="editor?.chain().focus().setParagraph().run()" :class="{ 'is-active': editor.isActive('paragraph') }">
+          <i-gridicons:posts></i-gridicons:posts>
+        </button>
       </div>
       <DatePicker
         style="font-family: Inter, sans-serif"
@@ -52,7 +54,12 @@
         <editor-content :editor="editor" />
       </div>
     </div>
-    <button class="btn mt-4 flex items-center" @click="publishContent">Goodnight.. <i-ic:twotone-save class="ml-2"></i-ic:twotone-save></button>
+    <div class="mt-4 flex items-center space-x-4">
+      <button class="btn-solid flex items-center" @click="publishContent">Goodnight! <i-ic:twotone-save class="ml-2"></i-ic:twotone-save></button>
+      <button class="btn flex items-center" @click="deleteContent">
+        Nevermind... <i-ic:twotone-developer-board-off class="ml-2"></i-ic:twotone-developer-board-off>
+      </button>
+    </div>
   </section>
 </template>
 
@@ -64,10 +71,10 @@ import Highlight from "@tiptap/extension-highlight"
 import Typography from "@tiptap/extension-typography"
 import Placeholder from "@tiptap/extension-placeholder"
 import Image from "@tiptap/extension-image"
-import { Calendar, DatePicker } from "v-calendar"
+import { DatePicker } from "v-calendar"
 import { createImageExtension } from "@/plugin/image"
 
-import { onBeforeUnmount, onMounted, ref, watch } from "vue"
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue"
 import { supabase } from "@/supabase"
 import { useIdle } from "@vueuse/core"
 import { state } from "@/store"
@@ -75,9 +82,13 @@ import { useRouter } from "vue-router"
 
 const router = useRouter()
 const content = ref<any>({})
-const date = ref(new Date(Date.now()).toISOString().split("T")[0])
+const date = ref(new Date(Date.now()))
+const computedDate = computed(() => {
+  return date.value.toISOString().split("T")[0]
+})
 const editor = ref<Editor>()
 const isPublishing = ref(false)
+const isPausingUpdate = ref(false)
 
 // highlight text function
 const highlightColor = (e: InputEvent) => {
@@ -90,12 +101,10 @@ async function upload(file: File) {
   formData.append("file", file)
   const randomString = (Math.random() + 1).toString(36).substring(7) + "-"
   const generateString = state.user?.id + "/" + randomString + file.name
-  const headers = { "Content-Type": "multipart/form-data" }
   const dataKey = await supabase.storage.from("assets").upload(generateString, formData)
   const { signedURL } = await supabase.storage.from("assets").createSignedUrl(generateString, 630720000)
 
   if (signedURL) {
-    // return URL.createObjectURL(data)
     return signedURL
   } else {
     return ""
@@ -137,24 +146,29 @@ const { idle, lastActive } = useIdle(3 * 1000, {
 
 watch(idle, (n) => {
   let checker = editor.value?.getJSON().content[0].content
-  if (n && !isPublishing.value && checker) {
+  if (n && !isPublishing.value && checker && !isPausingUpdate.value) {
     saveContent()
   }
 })
 
 // Supabase Action
 const fetchContent = async () => {
-  const { data, error } = await supabase.from("diaries").select("*").eq("date", date.value)
+  isPausingUpdate.value = true
+  const { data, error } = await supabase.from("diaries").select("*").eq("date", computedDate.value)
   if (data?.length) {
     content.value = data[0]
     editor.value?.commands.setContent(content.value.content)
+  } else {
+    content.value = {}
+    editor.value?.commands.clearContent()
   }
+  isPausingUpdate.value = false
 }
 
 const saveContent = async () => {
   const { data, error } = await supabase.from("diaries").upsert({
     id: content.value.id,
-    date: date.value,
+    date: computedDate.value,
     content: editor.value?.getJSON(),
     user_id: state.user?.id,
   })
@@ -172,12 +186,22 @@ const publishContent = async () => {
   if (error) {
     console.log("Saving problem")
   } else {
-    router.push(`/diary/${date.value}`)
+    router.push(`/diary/${computedDate.value}`)
   }
   isPublishing.value = false
 }
 
+const deleteContent = async () => {
+  editor.value?.commands.clearContent()
+  saveContent()
+}
+
 // calendare event
+watch(computedDate, (n) => {
+  if (n) {
+    fetchContent()
+  }
+})
 const masks = ref({
   input: "YYYY-MM-DD",
 })
@@ -194,18 +218,18 @@ const onDayClick = (day: any) => {
   pointer-events: none;
   height: 0;
 }
-.ProseMirror img {
-  @apply w-full h-full border-dark-900 border-3 rounded-xl;
+.helper > button > svg {
+  @apply h-6 w-6;
 }
-
-.bubble > button {
+.bubble > button,
+.helper > button {
   @apply flex items-center p-2 rounded-md hover:bg-cyan-300 transition-all ease-in-out focus:outline-none outline-none;
 }
 .is-active {
   @apply bg-cyan-300;
 }
-.vc-container {
-  @apply border-3 shadow-none rounded-xl;
+.vc-popover-content-wrapper > .vc-container {
+  @apply !border-3 shadow-none rounded-xl;
 }
 .vc-highlight {
   @apply !bg-dark-900;

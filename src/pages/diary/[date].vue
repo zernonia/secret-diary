@@ -1,8 +1,10 @@
 <template>
-  <div class="h-full flex flex-col relative">
+  <div class="h-full flex flex-col relative p-2">
     <div class="flex justify-between items-center">
       <h3 class="dear-diary">Dear diary,</h3>
-      <p class="border-b-3 border-dotted">{{ $route.params.date }}</p>
+      <p class="border-b-3 border-dotted text-center w-110px">
+        {{ $route.params.date }}
+      </p>
     </div>
     <div @scroll="scrollListener" ref="target" class="diary-page overflow-hidden overflow-y-auto">
       <editor-content :editor="editor" />
@@ -23,9 +25,10 @@ import Highlight from "@tiptap/extension-highlight"
 import Typography from "@tiptap/extension-typography"
 import Image from "@tiptap/extension-image"
 
-import { onBeforeUnmount, onMounted, ref, watch } from "vue"
+import { computed, onMounted, ref, watch } from "vue"
 import { supabase } from "@/supabase"
-import { useRoute } from "vue-router"
+import { useRoute, useRouter } from "vue-router"
+import { state } from "@/store"
 
 const route = useRoute()
 const editor = ref<Editor>()
@@ -80,7 +83,7 @@ const constructScrollBar = () => {
 const scrollListener = (e: MouseEvent) => {
   if (target.value) {
     const scrollPosition = target.value.scrollTop
-    console.log(scrollPosition)
+    // console.log(scrollPosition)
   }
 }
 </script>

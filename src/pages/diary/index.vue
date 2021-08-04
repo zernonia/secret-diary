@@ -1,23 +1,22 @@
 <template>
   <div class="flex flex-col items-center justify-center h-full pb-8">
-    <h2 class="mb-8">Diary sub</h2>
+    <h2 class="mb-8">— Calendar —</h2>
     <Calendar :rows="row" :columns="2" :max-date="new Date()" :attributes="attrs" @dayclick="onDayClick" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { supabase } from "@/supabase"
-import { computed, onMounted, ref } from "vue"
-import { Calendar, DatePicker } from "v-calendar"
+import { computed } from "vue"
+import { Calendar } from "v-calendar"
 import { useRouter } from "vue-router"
 import { useWindowSize } from "@vueuse/core"
+import { state } from "@/store"
 
 const router = useRouter()
 const { width, height } = useWindowSize()
 
-const list = ref<any[]>([])
 const attrs = computed(() => {
-  return list.value.map((i) => {
+  return state.date.map((i) => {
     return {
       highlight: true,
       dates: i.date,
@@ -37,21 +36,6 @@ const onDayClick = (e: any) => {
     router.push("/diary/" + e.id)
   }
 }
-
-onMounted(async () => {
-  const { data, error } = await supabase
-    .from("diaries")
-    .select("*")
-    .match({
-      is_editing: false,
-    })
-    .order("date", {
-      ascending: false,
-    })
-  if (data?.length) {
-    list.value = data
-  }
-})
 </script>
 
 <style lang="postcss">

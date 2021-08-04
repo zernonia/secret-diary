@@ -7,4 +7,8 @@ export const state = reactive({
   setUser: () => {
     state.user = supabase.auth.user()
   },
+  profile: {
+    username: "",
+  },
+  date: [] as any[],
 })

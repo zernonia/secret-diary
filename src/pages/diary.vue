@@ -1,7 +1,12 @@
 <template>
   <div>
-    <h1 class="mb-2 ml-8">Secret Diary</h1>
-    <div id="diary" class="diary p-8 relative flex flex-col w-screen-md h-screen-md border-3 border-dark-900 rounded-xl">
+    <div class="flex justify-between items-center mb-2 mx-8">
+      <h2>
+        Hi, <span class="text-cyan-400"> {{ state.profile.username }}</span>
+      </h2>
+      <h2>Secret Diary</h2>
+    </div>
+    <div id="diary" class="diary p-8 relative flex flex-col w-auto lg:w-screen-md lg:h-screen-md border-3 border-dark-900 rounded-xl">
       <div class="w-full h-full">
         <router-view></router-view>
       </div>
@@ -10,11 +15,35 @@
         <button class="bookmark" @click="$router.push('/diary')"><i-ic:twotone-list-alt></i-ic:twotone-list-alt></button>
       </div>
       <div class="absolute z-0 right-full w-auto bottom-10 flex flex-col space-y-2">
-        <button class="bookmark"><i-ic:twotone-settings></i-ic:twotone-settings></button>
+        <button class="bookmark" @click="$router.push('/diary/config')"><i-ic:twotone-settings></i-ic:twotone-settings></button>
       </div>
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { state } from "@/store"
+import { supabase } from "@/supabase"
+import { onMounted } from "vue"
+
+onMounted(async () => {
+  const { data, error } = await supabase
+    .from("diaries")
+    .select("*")
+    .match({
+      is_editing: false,
+    })
+    .order("date", {
+      ascending: false,
+    })
+  if (data?.length) {
+    state.date = data
+  }
+  const profile = await supabase.from("profiles").select("*")
+
+  profile.data ? (state.profile.username = profile.data[0].username) : ""
+})
+</script>
 
 <style lang="postcss">
 @media only screen and (min-height: 600px) {

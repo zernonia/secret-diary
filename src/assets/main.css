@@ -89,6 +89,7 @@ input[type="color"]::-webkit-color-swatch {
 .diary-page {
   background-color: white;
   background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23beaed9' fill-opacity='0.11' fill-rule='evenodd'%3E%3Ccircle cx='0' cy='0' r='0'/%3E%3Ccircle cx='15' cy='15' r='3'/%3E%3C/g%3E%3C/svg%3E");
+  @apply pb-4;
 }
 
 .dear-diary {
@@ -99,6 +100,9 @@ input[type="color"]::-webkit-color-swatch {
   @apply p-2 border-3 border-dark-900 rounded-l-lg flex items-center;
 }
 
+.prose img {
+  @apply my-4;
+}
 .ProseMirror img {
-  @apply w-full h-full border-dark-900 border-3 rounded-xl;
+  @apply w-full h-full  border-dark-900 border-3 rounded-xl;
 }
