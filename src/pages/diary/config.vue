@@ -2,7 +2,7 @@
   <div class="p-8 w-full h-full flex flex-col justify-between">
     <div class="flex flex-col space-y-4">
       <h1>Profile</h1>
-      <div class="flex justify-between items-center">
+      <div class="flex justify-between items-end">
         <div @click="uploadPhoto" class="w-48 h-48 flex items-center justify-center rounded-xl cursor-pointer border-3 border-dark-900 overflow-hidden">
           <img :src="imageSrc" alt="" />
         </div>

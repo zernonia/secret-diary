@@ -54,9 +54,11 @@
         <editor-content :editor="editor" />
       </div>
     </div>
-    <div class="mt-4 flex items-center space-x-4">
-      <button class="btn-solid flex items-center" @click="publishContent">Goodnight! <i-ic:twotone-save class="ml-2"></i-ic:twotone-save></button>
-      <button class="btn flex items-center" @click="deleteContent">
+    <div class="mt-4 flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+      <button v-tooltip="'Save & no longer editable'" class="btn-solid flex items-center" @click="publishContent" :disabled="!isEditable">
+        Goodnight! <i-ic:twotone-save class="ml-2"></i-ic:twotone-save>
+      </button>
+      <button v-tooltip="'Clear all'" class="btn flex items-center" @click="deleteContent" :disabled="!isEditable">
         Nevermind... <i-ic:twotone-developer-board-off class="ml-2"></i-ic:twotone-developer-board-off>
       </button>
     </div>
@@ -79,16 +81,19 @@ import { supabase } from "@/supabase"
 import { useIdle } from "@vueuse/core"
 import { state } from "@/store"
 import { useRouter } from "vue-router"
+import { useToast } from "vue-toastification"
 
 const router = useRouter()
+const toast = useToast()
 const content = ref<any>({})
 const date = ref(new Date(Date.now()))
 const computedDate = computed(() => {
-  return date.value.getFullYear() + "-" + date.value.getMonth() + "-" + date.value.getDate()
+  return date.value.getFullYear() + "-" + (date.value.getMonth() + 1) + "-" + date.value.getDate()
 })
 const editor = ref<Editor>()
 const isPublishing = ref(false)
 const isPausingUpdate = ref(false)
+const isEditable = ref(true)
 
 // highlight text function
 const highlightColor = (e: InputEvent) => {
@@ -114,6 +119,7 @@ async function upload(file: File) {
 onMounted(async () => {
   fetchContent()
   editor.value = new Editor({
+    editable: isEditable.value,
     extensions: [
       createImageExtension(upload),
       StarterKit,
@@ -157,6 +163,7 @@ const fetchContent = async () => {
   const { data, error } = await supabase.from("diaries").select("*").eq("date", computedDate.value)
   if (data?.length) {
     content.value = data[0]
+    isEditable.value = data[0].is_editing
     editor.value?.commands.setContent(content.value.content)
   } else {
     content.value = {}
@@ -184,7 +191,7 @@ const publishContent = async () => {
   })
 
   if (error) {
-    console.log("Saving problem")
+    toast.error(error.message)
   } else {
     router.push(`/diary/${computedDate.value}`)
   }

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="fullpage">
     <LoginForm></LoginForm>
   </div>
 </template>

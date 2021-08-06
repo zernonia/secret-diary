@@ -1,13 +1,14 @@
 <template>
   <div class="flex flex-col items-center">
-    <h1>Open Diary</h1>
+    <h1 class="mb-2">Open Diary</h1>
     <div v-if="loginPhase" class="flex flex-col items-center">
       <label for="">Phone Number</label>
-      <input type="text" v-model="phone_number" />
+      <input placeholder="+10123456789" type="text" v-model="phone_number" />
       <label for="">Password</label>
       <div class="flex items-center justify-between space-x-2">
         <input
-          type="number"
+          style="-moz-appearance: textfield; -webkit-text-security: disc"
+          type="tel"
           maxlength="1"
           v-for="(t, index) in pin"
           :key="index"
@@ -43,13 +44,14 @@
 <script setup lang="ts">
 import { ref } from "vue"
 import { useRouter } from "vue-router"
-import { supabase } from "../supabase"
+import { supabase } from "@/supabase"
+import { useToast } from "vue-toastification"
 
+const toast = useToast()
 const phone_number = ref("")
 const pin = ref(["", "", "", "", "", ""])
 const token = ref(["", "", "", "", "", ""])
 const loginPhase = ref(true)
-const invalidToast = ref()
 
 const login = async () => {
   const regex = /^[\+][(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/
@@ -61,12 +63,12 @@ const login = async () => {
       password: pinString,
     })
     if (error) {
-      invalidToast.value = error
+      toast.error(error.message)
     } else {
       router.push("/diary")
     }
   } else {
-    console.log("invalid phone")
+    toast.error("Invalid phone number")
   }
 }
 const register = async () => {
@@ -79,12 +81,12 @@ const register = async () => {
       password: pinString,
     })
     if (error) {
-      invalidToast.value = error
+      toast.error(error.message)
     } else {
       loginPhase.value = false
     }
   } else {
-    console.log("invalid phone")
+    toast.error("Invalid phone number")
   }
 }
 const router = useRouter()
@@ -97,10 +99,12 @@ const verify = async () => {
       token: tokenString,
     })
     if (error) {
-      invalidToast.value = error
+      toast.error(error.message)
     } else {
       router.push("/diary")
     }
+  } else {
+    toast.error("Token invalid")
   }
 }
 
