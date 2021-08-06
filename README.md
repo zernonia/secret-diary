@@ -1,27 +1,101 @@
-# Vue 3 + Typescript + Vite
+<!-- PROJECT LOGO -->
+<br />
+<p align="center">
+  <a href="https://github.com/zernonia/secret-diary">
+    <img src="src/assets/logo.svg" alt="Logo" width="80" height="80">
+  </a>
 
-This template should help get you started developing with Vue 3 and Typescript in Vite.
+  <h3 align="center">Secret Diary</h3>
 
-## Recommended IDE Setup
+  <p align="center">
+    Secret Diary Apps (submission for <strong><a href="https://supabase.io/">Supabase Hackathon</a></strong>)
+    <br />
+    <br />
+    <a href="https://secret-diary.vercel.app/">View Demo</a>
+    ·
+    <a href="https://github.com/zernonia/secret-diary/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/zernonia/secret-diary/issues">Request Feature</a>
+  </p>
+</p>
 
-[VSCode](https://code.visualstudio.com/) + [Vetur](https://marketplace.visualstudio.com/items?itemName=octref.vetur). Make sure to enable `vetur.experimental.templateInterpolationService` in settings!
+![Supabase Schema](src/assets/preview.png)
 
-### If Using `<script setup>`
+## 🚀 Features
 
-[`<script setup>`](https://github.com/vuejs/rfcs/pull/227) is a feature that is currently in RFC stage. To get proper IDE support for the syntax, use [Volar](https://marketplace.visualstudio.com/items?itemName=johnsoncodehk.volar) instead of Vetur (and disable Vetur).
+- 🔨 No installations required
+- 🔒 Data can be hosted on your own [Supabase](https://supabase.io/) Instance
+- 🚪 Phone login, required OTP for initial Sign Up
+- 👀 No Sensitive info required
+- 🤚 Move your loving diary to Web
 
-## Type Support For `.vue` Imports in TS
+## 📇 Submission Info (for Hackathon)
 
-Since TypeScript cannot handle type information for `.vue` imports, they are shimmed to be a generic Vue component type by default. In most cases this is fine if you don't really care about component prop types outside of templates. However, if you wish to get actual prop types in `.vue` imports (for example to get props validation when using manual `h(...)` calls), you can use the following:
+![Supabase Hackathon Meme](src/assets/meme.gif)
 
-### If Using Volar
+### 👨‍💻 Team
 
-Run `Volar: Switch TS Plugin on/off` from VSCode command palette.
+- Zernonia (@zernonia)
 
-### If Using Vetur
+### Project Idea
 
-1. Install and add `@vuedx/typescript-plugin-vue` to the [plugins section](https://www.typescriptlang.org/tsconfig#plugins) in `tsconfig.json`
-2. Delete `src/shims-vue.d.ts` as it is no longer needed to provide module info to Typescript
-3. Open `src/main.ts` in VSCode
-4. Open the VSCode command palette
-5. Search and run "Select TypeScript version" -> "Use workspace version"
+I want to quickly built an app that utilized Supabase RLS and Storage policies, and suddenly thought of this **Secret Diary** idea on my bed, becauase.... what else requires more security than your very dear Diary 📘!
+
+### ⚡ How I utilize Supabase
+
+1. Supabase **Phone Auth [(new release)](https://supabase.io/blog/2021/07/28/supabase-auth-passwordless-sms-login)**
+
+   - Trying to re-create Real Diary experience where Privacy & Access is super important. Therefore, using OTP should be much safer for Web Applications.
+   - **Note:** Due to Twilio Trial Version, I have to use verified Caller ID to pre-register 1 account for the judges _(Login: +60172542822 , Password: 123456)_. Also, to prevent judges not able to login when I'm asleep, I had to use Phone + Password login instead.
+   - From this project, I also discovered a [Bug related to Phone Auth](https://github.com/supabase/supabase-js/issues/222) too
+
+2. Supabase **Database**
+
+   - Trying to re-create the Real Diary experience where whatever the users has written down is automatically saved inside the diary, in this saved in Supabase Database.
+   - To make sure data is secured, I've enabled RLS and created simple policies where `auth.uid() = user_id` for all `SELECT`, `UPDATE`, `INSERT` and `DELETE`.
+   - Simple Schema for the project, generated from [Supabase Schema](https://supabase-schema.vercel.app/). ![Secret Diary Schema](src/assets/schema.png)
+
+3. Supabase **Storage**
+
+   - Similarly, Real Diary has images pasted in it. Thus, Supabase Storage comes in handy where users can directly upload to the folder specific to them inside a bucket, thus allow to safe guard those assets.
+   - To ensure personal images does not expose to other user, I've used the **Storage Policies** to quickly `Give users access to own folder`.
+
+### 🔨 Built With
+
+- [Vue 3](https://v3.vuejs.org/)
+- [Vite](https://vitejs.dev/)
+- [WindiCSS](https://windicss.org/)
+- [Supabase](https://supabase.io)
+
+## 🌎 Local Development
+
+### Prerequisites
+
+Yarn
+
+- ```sh
+  npm install --global yarn
+  ```
+
+### Development
+
+1. Clone the repo
+   ```sh
+   git clone https://github.com/zernonia/secret-diary.git
+   ```
+2. Install NPM packages
+   ```sh
+   yarn install
+   ```
+3. Run Development instance
+   ```sh
+   yarn dev
+   ```
+
+## 📜 License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+## 📧 Contact
+
+Zernonia - [@zernonia](https://twitter.com/zernonia) - zernonia@gmail.com

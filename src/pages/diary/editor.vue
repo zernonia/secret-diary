@@ -2,13 +2,21 @@
   <section class="flex flex-col justify-between h-full p-2">
     <div class="flex items-center justify-between pb-2">
       <div class="flex space-x-2 helper" v-if="editor">
-        <button @click="editor?.chain().focus().toggleHeading({ level: 2 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }">
+        <button
+          :disabled="!isEditable"
+          @click="editor?.chain().focus().toggleHeading({ level: 2 }).run()"
+          :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }"
+        >
           <i-gridicons:heading-h1></i-gridicons:heading-h1>
         </button>
-        <button @click="editor?.chain().focus().toggleHeading({ level: 3 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 3 }) }">
+        <button
+          :disabled="!isEditable"
+          @click="editor?.chain().focus().toggleHeading({ level: 3 }).run()"
+          :class="{ 'is-active': editor.isActive('heading', { level: 3 }) }"
+        >
           <i-gridicons:heading-h2></i-gridicons:heading-h2>
         </button>
-        <button @click="editor?.chain().focus().setParagraph().run()" :class="{ 'is-active': editor.isActive('paragraph') }">
+        <button :disabled="!isEditable" @click="editor?.chain().focus().setParagraph().run()" :class="{ 'is-active': editor.isActive('paragraph') }">
           <i-gridicons:posts></i-gridicons:posts>
         </button>
       </div>
@@ -27,7 +35,7 @@
     </div>
     <div class="overflow-auto h-full">
       <div class="mt-4 diary-page h-auto overflow-hidden overflow-y-auto">
-        <BubbleMenu class="bubble bg-white p-2 rounded-lg border-3 border-cyan-300 flex items-center space-x-1" :editor="editor" v-if="editor">
+        <BubbleMenu class="bubble bg-white p-2 rounded-lg border-3 border-cyan-300 flex items-center space-x-1" :editor="editor" v-if="editor && isEditable">
           <button @click="editor?.chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }">
             <i-ic:round-format-bold></i-ic:round-format-bold>
           </button>
@@ -54,12 +62,17 @@
         <editor-content :editor="editor" />
       </div>
     </div>
-    <div class="mt-4 flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
-      <button v-tooltip="'Save & no longer editable'" class="btn-solid flex items-center" @click="publishContent" :disabled="!isEditable">
+    <div v-if="isEditable" class="mt-4 flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+      <button v-tooltip="'Save & no longer editable'" class="btn-solid flex items-center" @click="publishContent">
         Goodnight! <i-ic:twotone-save class="ml-2"></i-ic:twotone-save>
       </button>
-      <button v-tooltip="'Clear all'" class="btn flex items-center" @click="deleteContent" :disabled="!isEditable">
+      <button v-tooltip="'Clear all'" class="btn flex items-center" @click="deleteContent">
         Nevermind... <i-ic:twotone-developer-board-off class="ml-2"></i-ic:twotone-developer-board-off>
+      </button>
+    </div>
+    <div class="mt-4">
+      <button v-tooltip="'Ink already sink deep into Paper'" class="btn-solid flex items-center">
+        Set it stone! <i-ic:twotone-emergency class="ml-2"></i-ic:twotone-emergency>
       </button>
     </div>
   </section>
@@ -167,8 +180,12 @@ const fetchContent = async () => {
     editor.value?.commands.setContent(content.value.content)
   } else {
     content.value = {}
+    isEditable.value = true
     editor.value?.commands.clearContent()
   }
+  editor.value?.setOptions({
+    editable: isEditable.value,
+  })
   isPausingUpdate.value = false
 }
 
