@@ -70,7 +70,7 @@
         Nevermind... <i-ic:twotone-developer-board-off class="ml-2"></i-ic:twotone-developer-board-off>
       </button>
     </div>
-    <div class="mt-4">
+    <div v-else class="mt-4">
       <button v-tooltip="'Ink already sink deep into Paper'" class="btn-solid flex items-center">
         Set it stone! <i-ic:twotone-emergency class="ml-2"></i-ic:twotone-emergency>
       </button>
