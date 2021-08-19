@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col items-center">
-    <h1 class="mb-2">Open Diary</h1>
+    <h1 class="mb-2">Open Diary (Demo)</h1>
     <div v-if="loginPhase" class="flex flex-col items-center">
       <label for="">Phone Number</label>
       <input placeholder="+10123456789" type="text" v-model="phone_number" />
@@ -38,6 +38,11 @@
       </div>
       <button class="btn mt-4" @click="verify">Verify</button>
     </div>
+
+    <span class="text-sm py-1 px-4 bg-gray-100 text-center"
+      >(Login: +60172542822 , Password: 123456) <br />
+      Please be polite!
+    </span>
   </div>
 </template>
 
